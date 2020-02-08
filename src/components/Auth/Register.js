@@ -17,7 +17,8 @@ const initialState = {
   username: "",
   email: "",
   password: "",
-  passwordConfirmation: ""
+  passwordConfirmation: "",
+  errors: []
 };
 
 class Register extends Component {
@@ -32,19 +33,66 @@ class Register extends Component {
     });
   };
 
+  isFormValid = () => {
+    let errors = [];
+    let error;
+
+    if (this.isFormEmpty(this.state)) {
+      error = { message: "Fill in all fields" };
+      this.setState({ errors: errors.concat(error) });
+      return false;
+    } else if (!this.isPasswordValid(this.state)) {
+      error = { message: "Password is invalid" };
+      this.setState({ errors: errors.concat(error) });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  displayErrors = errors =>
+    errors.map((error, index) => <p key={index}>{error.message}</p>);
+
+  isFormEmpty = ({ username, email, password, passwordConfirmation }) => {
+    return (
+      !username.length ||
+      !email.length ||
+      !password.length ||
+      !passwordConfirmation.length
+    );
+  };
+
+  isPasswordValid = ({ password, passwordConfirmation }) => {
+    if (password.length < 6 || passwordConfirmation.length < 6) {
+      return false;
+    } else if (password !== passwordConfirmation) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   handleSubmit = e => {
-    const { email, password } = this.state;
-    e.preventDefault();
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(createdUSer => {
-        console.log(createdUSer);
-      });
+    if (this.isFormValid()) {
+      const { email, password } = this.state;
+      e.preventDefault();
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(createdUSer => {
+          console.log(createdUSer);
+        });
+    }
   };
 
   render() {
-    const { username, email, password, passwordConfirmation } = this.state;
+    const {
+      username,
+      email,
+      password,
+      passwordConfirmation,
+      errors
+    } = this.state;
     return (
       <Grid textAlign="center" verticalAlign="middle" className="register">
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -94,14 +142,21 @@ class Register extends Component {
                 value={passwordConfirmation}
                 onChange={this.handleChange}
               />
+
               <Button color="blue" fluid size="large">
                 Submit
               </Button>
-              <Message>
-                Already an user? <Link to="/login">Login</Link>
-              </Message>
             </Segment>
           </Form>
+          {errors.length > 0 && (
+            <Message error>
+              <h3>Error</h3>
+              {this.displayErrors(errors)}
+            </Message>
+          )}
+          <Message>
+            Already an user? <Link to="/login">Login</Link>
+          </Message>
         </Grid.Column>
       </Grid>
     );
