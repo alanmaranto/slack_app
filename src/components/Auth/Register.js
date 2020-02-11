@@ -9,6 +9,7 @@ import {
   Icon
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import md5 from "md5";
 import firebase from "../../firebase";
 
 import "./App.css";
@@ -19,7 +20,8 @@ const initialState = {
   password: "",
   passwordConfirmation: "",
   errors: [],
-  loading: false
+  loading: false,
+  usersRef: firebase.database().ref("users")
 };
 
 class Register extends Component {
@@ -74,7 +76,7 @@ class Register extends Component {
   };
 
   handleSubmit = e => {
-    const { email, password, errors } = this.state;
+    const { email, password, errors, username } = this.state;
     e.preventDefault();
     if (this.isFormValid()) {
       this.setState({ errors: [], loading: true });
@@ -83,7 +85,22 @@ class Register extends Component {
         .createUserWithEmailAndPassword(email, password)
         .then(createdUSer => {
           console.log(createdUSer);
-          this.setState({ loading: false });
+          createdUSer.user
+            .updateProfile({
+              displayName: username,
+              photoURL: `http://gravatar.com/avatar/${md5(
+                createdUSer.user.email
+              )}?d=identicon`
+            })
+            .then(() => {
+              this.saveUser(createdUSer).then(() => {
+                console.log("user saved");
+              });
+            })
+            .catch(err => {
+              console.error(err);
+              this.setState({ errors: errors.concat(err), loading: false });
+            });
         })
         .catch(err => {
           console.error(err);
@@ -92,12 +109,18 @@ class Register extends Component {
     }
   };
 
+  saveUser = createdUser => {
+    const { usersRef } = this.state;
+    return usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL
+    });
+  };
+
   handleInputError = (errors, inputName) => {
-    return errors.some(error =>
-      error.message.toLowerCase().includes(inputName)
-    )
+    return errors.some(error => error.message.toLowerCase().includes(inputName))
       ? "error"
-      : ""
+      : "";
   };
 
   render() {
@@ -112,7 +135,7 @@ class Register extends Component {
     return (
       <Grid textAlign="center" verticalAlign="middle" className="register">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h2" icon color="blue" textAlign="center">
+          <Header as="h1" icon color="blue" textAlign="center">
             <Icon name="id badge" color="blue"></Icon>
             Register for Devchat
           </Header>
@@ -136,7 +159,7 @@ class Register extends Component {
                 placeholder="Email Address"
                 type="email"
                 onChange={this.handleChange}
-                className={this.handleInputError(errors, 'email')}
+                className={this.handleInputError(errors, "email")}
                 value={email}
               />
               <Form.Input
@@ -147,7 +170,7 @@ class Register extends Component {
                 placeholder="Password"
                 type="password"
                 onChange={this.handleChange}
-                className={this.handleInputError(errors, 'password')}
+                className={this.handleInputError(errors, "password")}
                 value={password}
               />
               <Form.Input
@@ -159,7 +182,7 @@ class Register extends Component {
                 type="password"
                 value={passwordConfirmation}
                 onChange={this.handleChange}
-                className={this.handleInputError(errors, 'password')}
+                className={this.handleInputError(errors, "password")}
               />
 
               <Button
