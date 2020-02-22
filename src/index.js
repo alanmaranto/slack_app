@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import Dashboard from "./views/Dashboard/Dashboard";
 import registerServiceWorker from "./registerServiceWorker";
 import firebase from "./firebase";
 
@@ -38,7 +38,7 @@ class Root extends Component {
     const { isLoading } = this.props;
     return isLoading ? <Spinner /> : (
       <Switch>
-        <Route exact path="/" component={App} />
+        <Route exact path="/" component={Dashboard} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
       </Switch>
