@@ -1,28 +1,28 @@
 import React, { Component } from "react";
 import firebase from "../../firebase";
-import { Grid, Header, Icon, Dropdown } from "semantic-ui-react";
+import { Grid, Header, Icon, Dropdown, Image } from "semantic-ui-react";
 
 /* const initialState = {
   user: this.props.currentUser
 }; */
 
 class UserPanel extends Component {
-    state = {
-        user: this.props.currentUser
-    }
-/*   constructor(props) {
+  state = {
+    user: this.props.currentUser
+  };
+  /*   constructor(props) {
     super(props);
     this.state = initialState;
   } */
 
   dropdownOptions = () => {
-      const { user } = this.state;
+    const { user } = this.state;
     return [
       {
         key: "user",
         text: (
           <span>
-      Signed in as <strong>{user.displayName}</strong>
+            Signed in as <strong>{user.displayName}</strong>
           </span>
         ),
         disabled: true
@@ -46,7 +46,7 @@ class UserPanel extends Component {
   };
 
   render() {
-      const { user } = this.state;
+    const { user } = this.state;
     console.log(this.props.currentUser);
     return (
       <Grid style={{ background: "#4c3c4c" }}>
@@ -57,14 +57,19 @@ class UserPanel extends Component {
               <Icon name="code" />
               <Header.Content>DevChat</Header.Content>
             </Header>
+            {/* User Dropdown */}
+            <Header style={{ padding: "0.2em" }} as="h4" inverted>
+              <Dropdown
+                trigger={
+                  <span>
+                    <Image src={user.photoURL} spaced="right" avatar />
+                    {user.displayName}
+                  </span>
+                }
+                options={this.dropdownOptions()}
+              />
+            </Header>
           </Grid.Row>
-          {/* User Dropdown */}
-          <Header style={{ padding: "0.2em" }} as="h4" inverted>
-            <Dropdown
-              trigger={<span>{user.displayName}</span>}
-              options={this.dropdownOptions()}
-            ></Dropdown>
-          </Header>
         </Grid.Column>
       </Grid>
     );
