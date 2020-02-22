@@ -4,13 +4,16 @@ import { Modal, Form, Input, Icon, Button} from 'semantic-ui-react'
 const AddChannelModal = ({
     modal,
     onChange,
+    channelName,
+    channelDetails,
+    onSubmit,
     closeModal
 }) => {
     return ( 
         <Modal basic open={modal} onClose={closeModal}>
         <Modal.Header>Add a Channel</Modal.Header>
         <Modal.Content>
-          <Form>
+          <Form onSubmit={onSubmit}>
             <Form.Field>
               <Input
                 fluid
@@ -30,7 +33,7 @@ const AddChannelModal = ({
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button color="green" inverted>
+          <Button color="green" inverted onClick={onSubmit}>
             <Icon name="checkmark" /> Add
           </Button>
           <Button color="red" inverted onClick={closeModal}>
