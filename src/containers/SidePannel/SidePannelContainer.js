@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Menu } from "semantic-ui-react";
 
-import UserPanel from "../UserPanel/UserPanel";
-import Channels  from './Channels';
+import UserPanel from "../../components/SidePanel/UserPanel";
+import Channels  from '../../components/Channels/ChannelsContainer';
 
 class SidePanel extends Component {
   render() {
