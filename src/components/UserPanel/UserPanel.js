@@ -1,33 +1,55 @@
 import React, { Component } from "react";
-import firebase from '../../firebase';
+import firebase from "../../firebase";
+import { connect } from "react-redux";
 import { Grid, Header, Icon, Dropdown } from "semantic-ui-react";
 
-class UserPanel extends Component {
-  dropdownOptions = () => [
-    {
-      key: "user",
-      text: (
-        <span>
-          Signed in as <strong>User</strong>
-        </span>
-      ),
-      disabled: true
-    },
-    {
-      key: "avatar",
-      text: <span>Change Avatar</span>
-    },
-    {
-      key: "signout",
-      text: <span onClick={this.onSignOut}>Sign out</span>
-    }
-  ];
+const initialState = {
+  user: null
+};
 
-  onSignOut = () => {
-      firebase.auth().signOut().then(() => console.log('signed out!'))
+class UserPanel extends Component {
+  constructor(props) {
+    super(props);
+    this.state = initialState;
   }
 
+  componentDidMount() {
+    const { currentUser } = this.props;
+    this.setState({ user: currentUser });
+  }
+
+  dropdownOptions = () => {
+    const { user } = this.state;
+    return [
+      {
+        key: "user",
+        text: (
+          <span>
+            Signed in as <strong>{user && user.displayName}</strong>
+          </span>
+        ),
+        disabled: true
+      },
+      {
+        key: "avatar",
+        text: <span>Change Avatar</span>
+      },
+      {
+        key: "signout",
+        text: <span onClick={this.onSignOut}>Sign out</span>
+      }
+    ];
+  };
+
+  onSignOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => console.log("signed out!"));
+  };
+
   render() {
+    console.log(this.props.currentUser);
     return (
       <Grid style={{ background: "#4c3c4c" }}>
         <Grid.Column>
@@ -51,4 +73,8 @@ class UserPanel extends Component {
   }
 }
 
-export default UserPanel;
+const mapStateToProps = state => ({
+  currentUser: state.user.currentUser
+});
+
+export default connect(mapStateToProps)(UserPanel);
