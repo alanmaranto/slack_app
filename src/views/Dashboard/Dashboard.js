@@ -2,9 +2,9 @@ import React from "react";
 import { Grid, GridColumn } from "semantic-ui-react";
 import { connect } from 'react-redux';
 
-import ColorPanel from "../../components/ColorPanel/ColorPanel";
+import ColorPanel from "../../containers/ColorPanel/ColorPanelContainer";
 import SidePanel from "../../containers/SidePannel/SidePannelContainer";
-import Messages from "../../components/Messages/Messages";
+import Messages from "../../components/Messages/MessagesContainer";
 import MetaPanel from "../../components/MetaPanel/MetaPanel";
 
 import "../../App.css";
