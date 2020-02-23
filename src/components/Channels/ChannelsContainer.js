@@ -11,7 +11,9 @@ const initialState = {
   channelName: "",
   channelDetails: "",
   channelsRef: firebase.database().ref("channels"),
-  modal: false
+  modal: false,
+  firstLoad: true,
+  activeChannel: ""
 };
 
 class ChannelsContainer extends Component {
@@ -50,25 +52,45 @@ class ChannelsContainer extends Component {
     channelsRef.on("child_added", snap => {
       loadedChannels.push(snap.val());
       console.log(loadedChannels);
-      this.setState({ channels: loadedChannels });
+      this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
     });
   };
 
-  displayChannels = channels =>
-    channels.length > 0 &&
-    channels.map(channel => (
-      <Menu.Item
-        key={channel.id}
-        onClick={() => this.changeChannel(channel)}
-        name={channel.name}
-        style={{ opacity: 0.7 }}
-      >
-        # {channel.name}
-      </Menu.Item>
-    ));
+  setFirstChannel = () => {
+    const { firstLoad, channels } = this.state;
+    const firstChannel = channels[0];
+    if (firstLoad && channels.length > 0) {
+      this.props.setCurrentChannel(firstChannel);
+      this.setActiveChannel(firstChannel)
+    }
+    this.setState({ firstLoad: false });
+  };
+
+  displayChannels = channels => {
+    const { activeChannel } = this.state;
+    return (
+      channels.length > 0 &&
+      channels.map(channel => (
+        <Menu.Item
+          key={channel.id}
+          onClick={() => this.changeChannel(channel)}
+          name={channel.name}
+          style={{ opacity: 0.7 }}
+          active={channel.id === activeChannel}
+        >
+          # {channel.name}
+        </Menu.Item>
+      ))
+    );
+  };
 
   changeChannel = channel => {
+    this.setActiveChannel(channel);
     this.props.setCurrentChannel(channel);
+  };
+
+  setActiveChannel = channel => {
+    this.setState({ activeChannel: channel.id });
   };
 
   addChannel = () => {
