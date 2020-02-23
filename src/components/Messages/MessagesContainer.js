@@ -69,7 +69,7 @@ class Messages extends Component {
   };
 
   render() {
-    const { errors } = this.state;
+    const { errors, message, loading } = this.state;
     return (
       <Fragment>
         <MessagesHeader />
@@ -77,6 +77,8 @@ class Messages extends Component {
           <Comment.Group className="messages">Messages</Comment.Group>
         </Segment>
         <MessageForm
+          message={message}
+          loading={loading}
           errors={errors}
           sendMessage={this.sendMessage}
           onChange={this.onChange}

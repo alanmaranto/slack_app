@@ -3,7 +3,7 @@ import { Segment, Button, Input } from "semantic-ui-react";
 
 const MessageForm = ({
   message,
-  messagesRef,
+  loading,
   errors,
   onChange,
   sendMessage
@@ -13,6 +13,7 @@ const MessageForm = ({
       <Input
         fluid
         name="message"
+        value={message}
         onChange={onChange}
         style={{ marginBottom: "0.7em" }}
         label={<Button icon={"add"} />}
@@ -25,6 +26,7 @@ const MessageForm = ({
       <Button.Group icon widths="2">
         <Button
           onClick={sendMessage}
+          disabled={loading}
           color="orange"
           content="Add reply"
           labelPosition="left"
