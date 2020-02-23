@@ -1,19 +1,30 @@
 import React from "react";
 import { Segment, Button, Input } from "semantic-ui-react";
 
-const MessageForm = () => {
+const MessageForm = ({
+  message,
+  messagesRef,
+  errors,
+  onChange,
+  sendMessage
+}) => {
   return (
     <Segment className="message_form">
       <Input
         fluid
         name="message"
+        onChange={onChange}
         style={{ marginBottom: "0.7em" }}
         label={<Button icon={"add"} />}
         labelPosition="left"
+        className={
+          errors.some(error => error.message.includes("message")) ? "error" : ""
+        }
         placeholder="Write your message"
       />
       <Button.Group icon widths="2">
         <Button
+          onClick={sendMessage}
           color="orange"
           content="Add reply"
           labelPosition="left"
