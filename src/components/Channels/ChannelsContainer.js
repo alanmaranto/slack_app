@@ -30,6 +30,10 @@ class ChannelsContainer extends Component {
     this.addListeners();
   }
 
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
   closeModal = () => {
     this.setState({
       modal: false
@@ -56,12 +60,17 @@ class ChannelsContainer extends Component {
     });
   };
 
+  removeListeners = () => {
+    const { channelsRef } = this.state;
+    channelsRef.off();
+  };
+
   setFirstChannel = () => {
     const { firstLoad, channels } = this.state;
     const firstChannel = channels[0];
     if (firstLoad && channels.length > 0) {
       this.props.setCurrentChannel(firstChannel);
-      this.setActiveChannel(firstChannel)
+      this.setActiveChannel(firstChannel);
     }
     this.setState({ firstLoad: false });
   };
