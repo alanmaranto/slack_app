@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
-import { Menu } from 'semantic-ui-react';
+import { Menu } from "semantic-ui-react";
 import firebase from "../../firebase";
+import { connect } from "react-redux";
+import { setCurrentChannel } from "../../redux/actions";
 import AddChannelModal from "./AddChannelModal";
 import Channels from "./Channels";
 
@@ -52,18 +54,22 @@ class ChannelsContainer extends Component {
     });
   };
 
-  displayChannels = channels => (
-    channels.length > 0 && channels.map(channel => (
+  displayChannels = channels =>
+    channels.length > 0 &&
+    channels.map(channel => (
       <Menu.Item
         key={channel.id}
-        onClick={() => console.log(channel)}
+        onClick={() => this.changeChannel(channel)}
         name={channel.name}
-        style={{ opacity: 0.7 }}
+        style={{ opacity: 0.7 }}
       >
         # {channel.name}
       </Menu.Item>
-    ))
-  )
+    ));
+
+  changeChannel = channel => {
+    this.props.setCurrentChannel(channel);
+  };
 
   addChannel = () => {
     const { channelsRef, channelName, channelDetails, user } = this.state;
@@ -107,11 +113,11 @@ class ChannelsContainer extends Component {
     const { channels, modal } = this.state;
     return (
       <Fragment>
-        <Channels 
-          channels={channels} 
-          openModal={this.openModal} 
+        <Channels
+          channels={channels}
+          openModal={this.openModal}
           displayChannels={this.displayChannels}
-          />
+        />
         <AddChannelModal
           modal={modal}
           onChange={this.onChange}
@@ -123,4 +129,4 @@ class ChannelsContainer extends Component {
   }
 }
 
-export default ChannelsContainer;
+export default connect(null, { setCurrentChannel })(ChannelsContainer);
