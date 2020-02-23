@@ -1,14 +1,15 @@
 import React, { Component, Fragment } from "react";
-import firebase from '../../firebase';
+import { Menu } from 'semantic-ui-react';
+import firebase from "../../firebase";
 import AddChannelModal from "./AddChannelModal";
-import Channels from './Channels'
+import Channels from "./Channels";
 
 const initialState = {
   channels: [],
-  channelName: '',
-  channelDetails: '',
-  channelsRef: firebase.database().ref('channels'),
-  modal: false,
+  channelName: "",
+  channelDetails: "",
+  channelsRef: firebase.database().ref("channels"),
+  modal: false
 };
 
 class ChannelsContainer extends Component {
@@ -16,9 +17,13 @@ class ChannelsContainer extends Component {
     super(props);
     const defaultState = {
       ...initialState,
-      user: this.props.currentUser,
-    }
+      user: this.props.currentUser
+    };
     this.state = defaultState;
+  }
+
+  componentDidMount() {
+    this.addListeners();
   }
 
   closeModal = () => {
@@ -37,8 +42,31 @@ class ChannelsContainer extends Component {
     });
   };
 
+  addListeners = () => {
+    const { channelsRef } = this.state;
+    let loadedChannels = [];
+    channelsRef.on("child_added", snap => {
+      loadedChannels.push(snap.val());
+      console.log(loadedChannels);
+      this.setState({ channels: loadedChannels });
+    });
+  };
+
+  displayChannels = channels => (
+    channels.length > 0 && channels.map(channel => (
+      <Menu.Item
+        key={channel.id}
+        onClick={() => console.log(channel)}
+        name={channel.name}
+        style={{ opacity: 0.7 }}
+      >
+        # {channel.name}
+      </Menu.Item>
+    ))
+  )
+
   addChannel = () => {
-    const { channelsRef, channelName, channelDetails, user } = this.state;
+    const { channelsRef, channelName, channelDetails, user } = this.state;
 
     const key = channelsRef.push().key;
 
@@ -48,36 +76,44 @@ class ChannelsContainer extends Component {
       details: channelDetails,
       createdBy: {
         name: user.displayName,
-        avatar: user.photoURL,
+        avatar: user.photoURL
       }
-    }
+    };
 
-    channelsRef.child(key).update(newChannel).then(() => {
-      this.setState({ channelName: '', channelDetails: '' });
-      this.closeModal();
-      console.log('channel added');
-    })
-    .catch(err => {
-      console.error(err)
-    })
-  }
+    channelsRef
+      .child(key)
+      .update(newChannel)
+      .then(() => {
+        this.setState({ channelName: "", channelDetails: "" });
+        this.closeModal();
+        console.log("channel added");
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  };
 
-  isFormValid = ({ channelName, channelDetails }) => channelName && channelDetails
+  isFormValid = ({ channelName, channelDetails }) =>
+    channelName && channelDetails;
 
   onSubmit = e => {
     e.preventDefault();
     if (this.isFormValid(this.state)) {
-      this.addChannel()
+      this.addChannel();
     }
-  }
+  };
 
   render() {
     const { channels, modal } = this.state;
     return (
       <Fragment>
-        <Channels channels={channels} openModal={this.openModal} />
-        <AddChannelModal 
-          modal={modal} 
+        <Channels 
+          channels={channels} 
+          openModal={this.openModal} 
+          displayChannels={this.displayChannels}
+          />
+        <AddChannelModal
+          modal={modal}
           onChange={this.onChange}
           closeModal={this.closeModal}
           onSubmit={this.onSubmit}
