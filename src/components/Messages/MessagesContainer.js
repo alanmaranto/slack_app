@@ -12,7 +12,8 @@ const initialState = {
   messagesLoading: true,
   loading: false,
   errors: [],
-  messagesRef: firebase.database().ref("messages")
+  messagesRef: firebase.database().ref("messages"),
+  modal: false,
 };
 
 class Messages extends Component {
@@ -106,8 +107,12 @@ class Messages extends Component {
     )))
   }
 
+  openModal = () => this.setState({ modal: true });
+
+  closeModal = () => this.setState({ modal: false });
+
   render() {
-    const { errors, message, loading, messages } = this.state;
+    const { errors, message, loading, messages, modal } = this.state;
     return (
       <Fragment>
         <MessagesHeader />
@@ -119,9 +124,11 @@ class Messages extends Component {
         <MessageForm
           message={message}
           loading={loading}
+          modal={modal}
           errors={errors}
           sendMessage={this.sendMessage}
-          onChange={this.onChange}
+          openModal={this.openModal}
+          closeModal={this.closeModal}
         />
       </Fragment>
     );

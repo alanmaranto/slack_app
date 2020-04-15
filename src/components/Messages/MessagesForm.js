@@ -1,12 +1,16 @@
 import React from "react";
 import { Segment, Button, Input } from "semantic-ui-react";
+import FileModalContainer from "./FileModalContainer";
 
 const MessageForm = ({
   message,
   loading,
   errors,
+  modal,
   onChange,
-  sendMessage
+  sendMessage,
+  openModal,
+  closeModal,
 }) => {
   return (
     <Segment className="message_form">
@@ -19,7 +23,9 @@ const MessageForm = ({
         label={<Button icon={"add"} />}
         labelPosition="left"
         className={
-          errors.some(error => error.message.includes("message")) ? "error" : ""
+          errors.some((error) => error.message.includes("message"))
+            ? "error"
+            : ""
         }
         placeholder="Write your message"
       />
@@ -37,7 +43,9 @@ const MessageForm = ({
           content="Upload Media"
           labelPosition="right"
           icon="cloud upload"
+          onClick={openModal}
         />
+        <FileModalContainer modal={modal} closeModal={closeModal} />
       </Button.Group>
     </Segment>
   );
