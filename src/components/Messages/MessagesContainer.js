@@ -126,6 +126,7 @@ class Messages extends Component {
           loading={loading}
           modal={modal}
           errors={errors}
+          onChange={this.onChange}
           sendMessage={this.sendMessage}
           openModal={this.openModal}
           closeModal={this.closeModal}
