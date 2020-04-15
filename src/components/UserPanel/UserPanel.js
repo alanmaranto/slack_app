@@ -3,7 +3,7 @@ import { Grid, Header, Icon, Dropdown, Image } from "semantic-ui-react";
 
 const UserPanel = ({ user, dropdownOptions }) => {
   return (
-    <Grid style={{ background: "#4c3c4c" }}>
+    <Grid style={{ background: "#<Header" }}>
       <Grid.Column>
         <Grid.Row style={{ padding: "1.2em", margin: 0 }}>
           {/* App Header */}
