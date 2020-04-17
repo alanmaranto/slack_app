@@ -11,6 +11,7 @@ const MessageForm = ({
   sendMessage,
   openModal,
   closeModal,
+  uploadFile
 }) => {
   return (
     <Segment className="message_form">
@@ -45,7 +46,7 @@ const MessageForm = ({
           icon="cloud upload"
           onClick={openModal}
         />
-        <FileModalContainer modal={modal} closeModal={closeModal} />
+        <FileModalContainer modal={modal} closeModal={closeModal} uploadFile={uploadFile} />
       </Button.Group>
     </Segment>
   );
