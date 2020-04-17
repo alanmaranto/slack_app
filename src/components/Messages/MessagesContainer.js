@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Segment, Comment } from "semantic-ui-react";
 import firebase from "../../firebase";
+import uuidv4 from "uuid/v4";
 
 import Message from "./Message";
 import MessageForm from "./MessagesForm";
@@ -14,6 +15,10 @@ const initialState = {
   errors: [],
   messagesRef: firebase.database().ref("messages"),
   modal: false,
+  uploadState: "",
+  uploadTask: null,
+  storageRef: firebase.storage().ref(),
+  percentUploaded: 0,
 };
 
 class Messages extends Component {
@@ -55,10 +60,9 @@ class Messages extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  createMessage = () => {
+  createMessage = (fileUrl = null) => {
     const { message, user } = this.state;
     const data = {
-      content: message,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       user: {
         id: user.uid,
@@ -66,6 +70,12 @@ class Messages extends Component {
         avatar: user.photoURL,
       },
     };
+    if (fileUrl !== null) {
+      data["image"] = fileUrl;
+    } else {
+      data["content"] = message;
+    }
+    console.log("CreateMessage, data", data);
     return data;
   };
 
@@ -109,8 +119,72 @@ class Messages extends Component {
 
   closeModal = () => this.setState({ modal: false });
 
+  //nested callbacks
+
   uploadFile = (file, metadata) => {
-    console.log("uploadedfile", file, metadata);
+    const { channel, messagesRef, storageRef, uploadTask, errors } = this.state;
+    const pathToUpload = channel.id;
+    const ref = messagesRef;
+    const filePath = `chat/public/${uuidv4()}.jpg`;
+
+    this.setState(
+      {
+        uploadState: "uploading",
+        uploadTask: storageRef.child(filePath).put(file, metadata),
+      },
+      () => {
+        this.state.uploadTask.on(
+          "state_changed",
+          (snap) => {
+            const percentUploaded = Math.round(
+              (snap.bytesTransferred / snap.totalBytes) * 100
+            );
+            this.setState({ percentUploaded });
+          },
+          (err) => {
+            console.error(err);
+            this.setState({
+              errors: errors.concat(err),
+              uploadState: "error",
+              uploadTask: null,
+            });
+          },
+          () => {
+            this.state.uploadTask.snapshot.ref
+              .getDownloadURL()
+              .then((downloadUrl) => {
+                this.sendFileMessage(downloadUrl, ref, pathToUpload);
+              })
+              .catch((err) => {
+                console.error(err);
+                this.setState({
+                  errors: errors.concat(err),
+                  uploadState: "error",
+                  uploadTask: null,
+                });
+              });
+          }
+        );
+      }
+    );
+  };
+
+  sendFileMessage = (fileUrl, ref, pathToUpload) => {
+    const { errors } = this.state;
+
+    ref
+      .child(pathToUpload)
+      .push()
+      .set(this.createMessage(fileUrl))
+      .then(() => {
+        this.setState({ uploadState: "done" });
+      })
+      .catch((err) => {
+        console.error(err);
+        this.setState({
+          errors: errors.concat(err),
+        });
+      });
   };
 
   render() {
