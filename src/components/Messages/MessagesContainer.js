@@ -7,7 +7,7 @@ import Message from "./Message";
 import MessageForm from "./MessagesForm";
 import MessagesHeader from "./MessagesHeader";
 
-import './style.css';
+import "./style.css";
 
 const initialState = {
   message: "",
@@ -21,6 +21,7 @@ const initialState = {
   uploadTask: null,
   storageRef: firebase.storage().ref(),
   percentUploaded: 0,
+  progressBar: false,
 };
 
 class Messages extends Component {
@@ -141,6 +142,7 @@ class Messages extends Component {
             const percentUploaded = Math.round(
               (snap.bytesTransferred / snap.totalBytes) * 100
             );
+            this.isProgressBarVisible(percentUploaded);
             this.setState({ percentUploaded });
           },
           (err) => {
@@ -189,6 +191,14 @@ class Messages extends Component {
       });
   };
 
+  isProgressBarVisible = (percent) => {
+    if (percent > 0) {
+      this.setState({
+        progressBar: true,
+      });
+    }
+  };
+
   render() {
     const {
       errors,
@@ -198,12 +208,15 @@ class Messages extends Component {
       modal,
       uploadState,
       percentUploaded,
+      progressBar
     } = this.state;
     return (
       <Fragment>
         <MessagesHeader />
         <Segment>
-          <Comment.Group className="messages">
+          <Comment.Group
+            className={progressBar ? "messages_progress" : "messages"}
+          >
             {this.displayMessages(messages)}
           </Comment.Group>
         </Segment>
