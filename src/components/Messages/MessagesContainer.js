@@ -122,7 +122,7 @@ class Messages extends Component {
   //nested callbacks
 
   uploadFile = (file, metadata) => {
-    const { channel, messagesRef, storageRef, uploadTask, errors } = this.state;
+    const { channel, messagesRef, storageRef, errors } = this.state;
     const pathToUpload = channel.id;
     const ref = messagesRef;
     const filePath = `chat/public/${uuidv4()}.jpg`;
@@ -188,7 +188,15 @@ class Messages extends Component {
   };
 
   render() {
-    const { errors, message, loading, messages, modal } = this.state;
+    const {
+      errors,
+      message,
+      loading,
+      messages,
+      modal,
+      uploadState,
+      percentUploaded,
+    } = this.state;
     return (
       <Fragment>
         <MessagesHeader />
@@ -207,6 +215,8 @@ class Messages extends Component {
           openModal={this.openModal}
           closeModal={this.closeModal}
           uploadFile={this.uploadFile}
+          uploadState={uploadState}
+          percentUploaded={percentUploaded}
         />
       </Fragment>
     );

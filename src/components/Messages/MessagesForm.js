@@ -1,7 +1,8 @@
 import React from "react";
 import { Segment, Button, Input } from "semantic-ui-react";
 import FileModalContainer from "./FileModalContainer";
-
+import ProgressBar from "../../core/ProgressBar/ProgressBar";
+import "./style.css";
 const MessageForm = ({
   message,
   loading,
@@ -11,7 +12,9 @@ const MessageForm = ({
   sendMessage,
   openModal,
   closeModal,
-  uploadFile
+  uploadFile,
+  uploadState,
+  percentUploaded,
 }) => {
   return (
     <Segment className="message_form">
@@ -46,8 +49,16 @@ const MessageForm = ({
           icon="cloud upload"
           onClick={openModal}
         />
-        <FileModalContainer modal={modal} closeModal={closeModal} uploadFile={uploadFile} />
       </Button.Group>
+      <FileModalContainer
+        modal={modal}
+        closeModal={closeModal}
+        uploadFile={uploadFile}
+      />
+      <ProgressBar
+        uploadState={uploadState}
+        percentUploaded={percentUploaded}
+      />
     </Segment>
   );
 };
