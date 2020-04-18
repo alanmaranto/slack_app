@@ -7,7 +7,7 @@ import SidePanel from "../../containers/SidePannel/SidePannelContainer";
 import Messages from "../../components/Messages/MessagesContainer";
 import MetaPanel from "../../components/MetaPanel/MetaPanel";
 
-import "../../App.css";
+import "../../components/App.css";
 
 const Dashboard = ({ currentUser, currentChannel }) => (
   <Grid columns="equal" className="app" style={{ background: "#eee" }}>

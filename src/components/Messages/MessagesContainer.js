@@ -7,6 +7,8 @@ import Message from "./Message";
 import MessageForm from "./MessagesForm";
 import MessagesHeader from "./MessagesHeader";
 
+import './style.css';
+
 const initialState = {
   message: "",
   messages: [],

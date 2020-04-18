@@ -2,6 +2,7 @@ import React from "react";
 import { Image } from "semantic-ui-react";
 import moment from "moment";
 import { Comment } from "semantic-ui-react";
+import './style.css';
 
 const isOwnMessage = (message, user) => {
   return message.user.id === user.uid ? "message_self" : "";
