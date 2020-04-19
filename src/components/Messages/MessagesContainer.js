@@ -22,6 +22,7 @@ const initialState = {
   storageRef: firebase.storage().ref(),
   percentUploaded: 0,
   progressBar: false,
+  numUniqueUsers: "",
 };
 
 class Messages extends Component {
@@ -56,6 +57,7 @@ class Messages extends Component {
         messages: loadedMessages,
         messagesLoading: false,
       });
+      this.countUniqueUsers(loadedMessages);
     });
   };
 
@@ -199,6 +201,30 @@ class Messages extends Component {
     }
   };
 
+  displayChannelName = (channel) => (channel ? `#${channel.name}` : "");
+
+  countUniqueUsers = (messages) => {
+    console.log("arraymsgs", messages);
+    const uniqueUsers = messages.reduce((accumulator, message) => {
+      console.log("arrayofusers", accumulator);
+      console.log("objmsg", message);
+
+      if (!accumulator.includes(message.user.name)) {
+        accumulator.push(message.user.name);
+      }
+      console.log("arrayofusersfinal", accumulator);
+      return accumulator;
+    }, []);
+    const singleUser = uniqueUsers.length > 1 || uniqueUsers.length === 0;
+    console.log("singleUser validation", singleUser);
+    console.log("uniqueUsers", uniqueUsers);
+    const numUniqueUsers = `${uniqueUsers.length} user${singleUser ? "s" : ""}`;
+    console.log("numunique", numUniqueUsers);
+    this.setState({
+      numUniqueUsers,
+    });
+  };
+
   render() {
     const {
       errors,
@@ -208,11 +234,16 @@ class Messages extends Component {
       modal,
       uploadState,
       percentUploaded,
-      progressBar
+      progressBar,
+      channel,
+      numUniqueUsers,
     } = this.state;
     return (
       <Fragment>
-        <MessagesHeader />
+        <MessagesHeader
+          channelName={this.displayChannelName(channel)}
+          numUniqueUsers={numUniqueUsers}
+        />
         <Segment>
           <Comment.Group
             className={progressBar ? "messages_progress" : "messages"}
