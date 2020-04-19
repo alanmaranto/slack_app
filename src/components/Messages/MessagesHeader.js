@@ -1,7 +1,12 @@
 import React from "react";
 import { Header, Segment, Input, Icon } from "semantic-ui-react";
 
-const MessagesHeader = ({ channelName, numUniqueUsers }) => {
+const MessagesHeader = ({
+  channelName,
+  numUniqueUsers,
+  onSearch,
+  searchLoading,
+}) => {
   return (
     <Segment clearing>
       {/* Channel Title */}
@@ -15,10 +20,12 @@ const MessagesHeader = ({ channelName, numUniqueUsers }) => {
       {/* Channel Search Input */}
       <Header floated="right">
         <Input
+          loading={searchLoading}
           size="mini"
           icon="search"
           name="searchTerm"
           placeholder="Search Messages"
+          onChange={onSearch}
         />
       </Header>
     </Segment>

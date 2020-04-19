@@ -23,6 +23,9 @@ const initialState = {
   percentUploaded: 0,
   progressBar: false,
   numUniqueUsers: "",
+  searchTerm: "",
+  searchLoading: false,
+  searchResults: [],
 };
 
 class Messages extends Component {
@@ -225,6 +228,33 @@ class Messages extends Component {
     });
   };
 
+  onSearch = (e) => {
+    this.setState(
+      {
+        searchTerm: e.target.value,
+        searchLoading: true,
+      },
+      () => this.filterMessages()
+    );
+  };
+
+  filterMessages = () => {
+    const { messages, searchTerm } = this.state;
+    const channelMessages = [...messages];
+
+    /* g modifier: global. All matches (don't return on first match)
+      i modifier: insensitive. Case insensitive match (ignores case of [a-zA-Z])*/
+    const regex = new RegExp(searchTerm, "gi");
+    const searchResults = channelMessages.reduce((accumulator, message) => {
+      if ((message.content && message.content.match(regex)) || message.user.name.match(regex)) {
+        accumulator.push(message);
+      }
+      return accumulator;
+    }, []);
+    this.setState({ searchResults });
+    setTimeout(() => this.setState({ searchLoading: false}), 1000)
+  };
+
   render() {
     const {
       errors,
@@ -237,18 +267,25 @@ class Messages extends Component {
       progressBar,
       channel,
       numUniqueUsers,
+      searchTerm,
+      searchResults,
+      searchLoading
     } = this.state;
     return (
       <Fragment>
         <MessagesHeader
           channelName={this.displayChannelName(channel)}
           numUniqueUsers={numUniqueUsers}
+          onSearch={this.onSearch}
+          searchLoading={searchLoading}
         />
         <Segment>
           <Comment.Group
             className={progressBar ? "messages_progress" : "messages"}
           >
-            {this.displayMessages(messages)}
+            {searchTerm
+              ? this.displayMessages(searchResults)
+              : this.displayMessages(messages)}
           </Comment.Group>
         </Segment>
         <MessageForm
