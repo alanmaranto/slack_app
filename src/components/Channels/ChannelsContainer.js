@@ -55,7 +55,6 @@ class ChannelsContainer extends Component {
     let loadedChannels = [];
     channelsRef.on("child_added", snap => {
       loadedChannels.push(snap.val());
-      console.log(loadedChannels);
       this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
     });
   };
@@ -123,7 +122,6 @@ class ChannelsContainer extends Component {
       .then(() => {
         this.setState({ channelName: "", channelDetails: "" });
         this.closeModal();
-        console.log("channel added");
       })
       .catch(err => {
         console.error(err);

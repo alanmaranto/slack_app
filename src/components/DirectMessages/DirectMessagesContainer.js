@@ -24,7 +24,6 @@ class DirectMessagesContainer extends Component {
     usersRef.on("child_added", (snap) => {
       if (currentUserUid !== snap.key) {
         let user = snap.val();
-        console.log("111", user);
         user.uid = snap.key;
         user.status = "offline";
         loadedUsers.push(user);

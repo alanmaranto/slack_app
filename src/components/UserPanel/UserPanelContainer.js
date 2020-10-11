@@ -48,7 +48,6 @@ class UserPanelContainer extends Component {
 
   render() {
     const { user } = this.state;
-    console.log(this.props.currentUser);
     return (
       <UserPanel user={user} dropdownOptions={this.dropdownOptions}/>
     );

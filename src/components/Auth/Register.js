@@ -84,7 +84,6 @@ class Register extends Component {
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(createdUSer => {
-          console.log(createdUSer);
           createdUSer.user
             .updateProfile({
               displayName: username,
@@ -94,7 +93,6 @@ class Register extends Component {
             })
             .then(() => {
               this.saveUser(createdUSer).then(() => {
-                console.log("user saved");
               });
             })
             .catch(err => {

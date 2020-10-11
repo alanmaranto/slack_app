@@ -55,7 +55,6 @@ class Messages extends Component {
     let loadedMessages = [];
     this.state.messagesRef.child(channelId).on("child_added", (snap) => {
       loadedMessages.push(snap.val());
-      console.log(loadedMessages);
       this.setState({
         messages: loadedMessages,
         messagesLoading: false,
@@ -83,7 +82,6 @@ class Messages extends Component {
     } else {
       data["content"] = message;
     }
-    console.log("CreateMessage, data", data);
     return data;
   };
 
@@ -207,22 +205,15 @@ class Messages extends Component {
   displayChannelName = (channel) => (channel ? `#${channel.name}` : "");
 
   countUniqueUsers = (messages) => {
-    console.log("arraymsgs", messages);
     const uniqueUsers = messages.reduce((accumulator, message) => {
-      console.log("arrayofusers", accumulator);
-      console.log("objmsg", message);
 
       if (!accumulator.includes(message.user.name)) {
         accumulator.push(message.user.name);
       }
-      console.log("arrayofusersfinal", accumulator);
       return accumulator;
     }, []);
     const singleUser = uniqueUsers.length > 1 || uniqueUsers.length === 0;
-    console.log("singleUser validation", singleUser);
-    console.log("uniqueUsers", uniqueUsers);
     const numUniqueUsers = `${uniqueUsers.length} user${singleUser ? "s" : ""}`;
-    console.log("numunique", numUniqueUsers);
     this.setState({
       numUniqueUsers,
     });
