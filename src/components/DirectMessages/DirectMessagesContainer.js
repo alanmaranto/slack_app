@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Menu, Icon } from "semantic-ui-react";
+import DirectMessages from "./DirectMessages";
 import firebase from "../../firebase";
 
 class DirectMessagesContainer extends Component {
@@ -71,30 +71,7 @@ class DirectMessagesContainer extends Component {
 
   render() {
     const { users } = this.state;
-    return (
-      <Menu.Menu className="menu">
-        <Menu.Item>
-          <span>
-            <Icon name="mail" /> DIRECT MESSAGES
-          </span>{" "}
-          ({users.length})
-        </Menu.Item>
-        {/* Users to Send Direct Messages */}
-        {users.map((user) => (
-          <Menu.Item
-            key={user.id}
-            onClick={() => console.log(user)}
-            style={{ opacity: 0.7, fontStyle: "italic" }}
-          >
-            <Icon
-              name="circle"
-              color={this.isUserOnline(user) ? "green" : "red"}
-            />
-            @ {user.name}
-          </Menu.Item>
-        ))}
-      </Menu.Menu>
-    );
+    return <DirectMessages users={users} isUserOnline={this.isUserOnline} />;
   }
 }
 
