@@ -12,28 +12,29 @@ class DirectMessagesContainer extends Component {
   };
 
   componentDidMount() {
-    if (this.state.user) {
-      this.addListeners(this.state.user.uid);
+    const { user } = this.state;
+    if (user) {
+      this.addListeners(user.uid);
     }
   }
 
   addListeners = (currentUserUid) => {
+    const { connectedRef, usersRef, presenceRef } = this.state;
     let loadedUsers = [];
-    this.state.usersRef.on("child_added", (snap) => {
+    usersRef.on("child_added", (snap) => {
       if (currentUserUid !== snap.key) {
-        console.log("snap key", snap.key);
         let user = snap.val();
-        console.log("1 user", user);
-        user["uid"] = snap.key;
-        user["status"] = "offline";
+        console.log("111", user);
+        user.uid = snap.key;
+        user.status = "offline";
         loadedUsers.push(user);
         this.setState({ users: loadedUsers });
       }
     });
 
-    this.state.connectedRef.on("value", (snap) => {
+    connectedRef.on("value", (snap) => {
       if (snap.val() === true) {
-        const ref = this.state.presenceRef.child(currentUserUid);
+        const ref = presenceRef.child(currentUserUid);
         ref.set(true);
         ref.onDisconnect().remove((err) => {
           if (err !== null) {
@@ -43,13 +44,13 @@ class DirectMessagesContainer extends Component {
       }
     });
 
-    this.state.presenceRef.on("child_added", (snap) => {
+    presenceRef.on("child_added", (snap) => {
       if (currentUserUid !== snap.key) {
         //add status to user
         this.addStatusToUser(snap.key);
       }
     });
-    this.state.presenceRef.on("child_removed", (snap) => {
+    presenceRef.on("child_removed", (snap) => {
       if (currentUserUid !== snap.key) {
         this.addStatusToUser(snap.key, false);
       }
@@ -57,9 +58,10 @@ class DirectMessagesContainer extends Component {
   };
 
   addStatusToUser = (userId, connected = true) => {
-    const updatedUsers = this.state.users.reduce((acc, user) => {
+    const { users } = this.state;
+    const updatedUsers = users.reduce((acc, user) => {
       if (user.uid === userId) {
-        user["status"] = `${connected ? "online" : "offline"}`;
+        user.status = `${connected ? "online" : "offline"}`;
       }
 
       return acc.concat(user);
